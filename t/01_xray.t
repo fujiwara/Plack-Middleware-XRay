@@ -5,7 +5,7 @@ use Plack::Test;
 use Plack::Builder;
 use Plack::Middleware::XRay;
 use HTTP::Request::Common;
-use AWS::XRay qw/ trace /;
+use AWS::XRay qw/ capture /;
 use JSON::XS;
 use IO::Scalar;
 
@@ -17,7 +17,7 @@ no warnings 'redefine';
 
 my $app = sub {
     my $env = shift;
-    trace "myApp", sub {
+    capture "myApp", sub {
         [200, ['Content-Type' => 'text/plain'], ["Hello World\n"]];
     };
 };

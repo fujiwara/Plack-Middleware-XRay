@@ -5,22 +5,18 @@ use strict;
 use warnings;
 use parent "Plack::Middleware";
 
-use AWS::XRay;
+use AWS::XRay qw/ capture_from /;
 
-our $VERSION = "0.01";
+our $VERSION           = "0.01";
+our $TRACE_HEADER_NAME = "X-Amzn-Trace-ID";
+(my $trace_header_key  = uc("HTTP_${TRACE_HEADER_NAME}")) =~ s/-/_/g;
 
 sub call {
     my ($self, $env) = @_;
 
-    my ($trace_id, $segment_id) = parse_trace_header($env->{HTTP_X_AMZN_TRACE_ID});
-    local $AWS::XRay::TRACE_ID   = $trace_id;
-    local $AWS::XRay::SEGMENT_ID = $segment_id;
-    local $AWS::XRay::ENABLED    = 1;
+    local $AWS::XRay::ENABLED = 1;
 
-    AWS::XRay->daemon_host($self->{daemon_host} || "127.0.0.1");
-    AWS::XRay->daemon_port($self->{daemon_port} || 2000);
-
-    return AWS::XRay::trace $self->{name}, sub {
+    return capture_from $env->{$trace_header_key}, $self->{name}, sub {
         my $segment = shift;
 
         # fill annotations and metadata
@@ -78,19 +74,6 @@ sub url {
         $env->{HTTP_HOST},
         $env->{REQUEST_URI},
     );
-}
-
-sub parse_trace_header {
-    my $header = shift or return;
-
-    my ($trace_id, $segment_id);
-    if ($header =~ /Root=([0-9a-fA-F-]+)/) {
-        $trace_id = $1;
-    }
-    if ($header =~ /Parent=([0-9a-fA-F]+)/) {
-        $segment_id = $1;
-    }
-    return ($trace_id, $segment_id);
 }
 
 1;

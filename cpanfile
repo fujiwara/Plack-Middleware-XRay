@@ -6,5 +6,5 @@ on 'test' => sub {
 };
 
 requires 'Plack::Middleware';
-requires 'AWS::XRay';
+requires 'AWS::XRay', '0.02';
 
