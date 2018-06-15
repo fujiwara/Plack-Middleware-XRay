@@ -2,5 +2,7 @@ Revision history for Perl extension Plack-Middleware-XRay
 
 {{$NEXT}}
 
+0.01 2018-06-15T05:53:25Z
+
     - original version
 
