@@ -49,6 +49,7 @@
       },
       "test" : {
          "requires" : {
+            "IO::Scalar" : "0",
             "Test::More" : "0.98"
          }
       }
