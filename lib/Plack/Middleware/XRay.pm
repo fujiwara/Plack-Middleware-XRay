@@ -14,7 +14,7 @@ our $TRACE_HEADER_NAME = "X-Amzn-Trace-ID";
 sub call {
     my ($self, $env) = @_;
 
-    local $AWS::XRay::ENABLED = 1;
+    AWS::XRay->sampling_rate($self->{sampling_rate} // 1);
 
     return capture_from $env->{$trace_header_key}, $self->{name}, sub {
         my $segment = shift;
@@ -95,12 +95,11 @@ Plack::Middleware::XRay - Plack middleware for AWS X-Ray tracing
           $app;
       };
 
-      # an example of sampling
+      # example of sampling
       builder {
-          local $AWS::XRay::ENABLED = 0; # disable default
-          enable_if { rand < 0.01 }      # enable only 1% request
-              "XRay"
-                  name => "myApp",
+          enable "XRay"
+              name          => "myApp",
+              sampling_rate => 0.01,     # 1%
           ;
           $app;
       };

@@ -12,12 +12,11 @@ Plack::Middleware::XRay - Plack middleware for AWS X-Ray tracing
           $app;
       };
 
-      # an example of sampling
+      # example of sampling
       builder {
-          local $AWS::XRay::ENABLED = 0; # disable default
-          enable_if { rand < 0.01 }      # enable only 1% request
-              "XRay"
-                  name => "myApp",
+          enable "XRay"
+              name          => "myApp",
+              sampling_rate => 0.01,     # 1%
           ;
           $app;
       };
