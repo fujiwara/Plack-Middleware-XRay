@@ -42,7 +42,7 @@
       },
       "runtime" : {
          "requires" : {
-            "AWS::XRay" : "0.03",
+            "AWS::XRay" : "0.04",
             "Plack::Middleware" : "0",
             "perl" : "5.012000"
          }
