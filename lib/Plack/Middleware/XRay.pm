@@ -8,7 +8,7 @@ use parent "Plack::Middleware";
 use AWS::XRay qw/ capture_from /;
 use Time::HiRes ();
 
-our $VERSION           = "0.05";
+our $VERSION           = "0.06";
 our $TRACE_HEADER_NAME = "X-Amzn-Trace-ID";
 (my $trace_header_key  = uc("HTTP_${TRACE_HEADER_NAME}")) =~ s/-/_/g;
 
