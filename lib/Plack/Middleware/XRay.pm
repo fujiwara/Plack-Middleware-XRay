@@ -27,6 +27,10 @@ sub call {
         AWS::XRay->auto_flush(0);
     }
 
+    if (ref $self->{plugins} eq "ARRAY") {
+        AWS::XRay->plugins(@{ $self->{plugins} });
+    }
+
     my $t0 = [ Time::HiRes::gettimeofday ];
     my $res = capture_from $env->{$trace_header_key}, $self->{name}, sub {
         my $segment = shift;
@@ -197,6 +201,14 @@ Code ref to generate a metadata hashref.
 When response_filter defined, call the coderef with ($env, $res, $elapsed) after $app run.
 
 Segment data are sent to xray daemon only when the coderef returns true.
+
+=head2 plugins
+
+When plugins defined, AWS::XRay enables these plugins.
+
+    enable "XRay"
+      name => "myApp",
+      plugins => ["AWS::XRay::Plugin::EC2"],
 
 =head1 LICENSE
 
